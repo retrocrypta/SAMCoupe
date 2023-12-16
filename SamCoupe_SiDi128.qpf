@@ -22,9 +22,9 @@
 #
 # -------------------------------------------------------------------------- #
 
-QUARTUS_VERSION = "13.1"
+QUARTUS_VERSION = "13.0"
 DATE = "23:30:28  October 14, 2014"
 
 # Revisions
 
-PROJECT_REVISION = "SamCoupe"
+PROJECT_REVISION = "SamCoupe_SiDi128"

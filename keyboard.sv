@@ -42,7 +42,10 @@ module keyboard
 	input             restart,
 	input             clk_sys,
 
-	input      [10:0] ps2_key,
+	input             key_strobe,
+	input             key_pressed,
+	input             key_extended,
+	input       [7:0] key_code,
 
 	input      [15:0] addr,
 	output      [7:0] key_data,
@@ -54,8 +57,7 @@ module keyboard
 
 reg  [7:0] keys[8:0];
 
-wire [7:0] kcode       = {ps2_key[7:0]};
-wire       release_btn = ~ps2_key[9];
+wire       release_btn = ~key_pressed;
 
 assign key_data = ({8{addr[8]}}  | keys[0]) & ({8{addr[9]}}  | keys[1]) & ({8{addr[10]}} | keys[2]) & ({8{addr[11]}} | keys[3])
                  &({8{addr[12]}} | keys[4]) & ({8{addr[13]}} | keys[5]) & ({8{addr[14]}} | keys[6]) & ({8{addr[15]}} | keys[7])
@@ -69,7 +71,6 @@ always @(posedge clk_sys) begin
 	reg old_anykey, old_auto;
 	reg old_reset = 0, old_sw;
 	reg mode;
-	reg old_stb;
 
 	old_sw <= mod[2] & mod[0];
 	if(~old_sw & mod[2] & mod[0]) mode <= ~mode;
@@ -81,8 +82,6 @@ always @(posedge clk_sys) begin
 	if(~old_auto & autostart & auto_en) keys[2][7] <= 0;
 	if(old_auto & ~autostart) keys[2][7] <= 1;
 	
-	old_stb <= ps2_key[10];
-
 	old_reset <= reset;
 	if((~old_reset & reset) | (~old_sw & mod[2] & mod[0]))begin
 		if(reset) mode <= 0;
@@ -96,9 +95,9 @@ always @(posedge clk_sys) begin
 		keys[7] <= 'hFF;
 		keys[8] <= 'hFF;
 	end else begin
-		if(old_stb != ps2_key[10]) begin
+		if(key_strobe) begin
 
-			case(kcode)
+			case(key_code)
 				8'h59 : mod[0] <= ~release_btn; // right shift
 				8'h11 : mod[1] <= ~release_btn; // alt
 				8'h14 : mod[2] <= ~release_btn; // ctrl
@@ -115,7 +114,7 @@ always @(posedge clk_sys) begin
 				8'h78 : Fn[11] <= ~release_btn; // F11
 			endcase
 
-			case(kcode)
+			case(key_code)
 				8'h12 : keys[0][0] <= release_btn; // Left shift (CAPS SHIFT)
 				8'h1a : keys[0][1] <= release_btn; // Z
 				8'h22 : keys[0][2] <= release_btn; // X
@@ -160,7 +159,7 @@ always @(posedge clk_sys) begin
 			endcase
 
 			if(mode) begin
-				case(kcode)
+				case(key_code)
 					8'h45 :
 						if(shift) begin
 							keys[7][1] <= release_btn;        // Alt (Symbol Shift)
@@ -291,7 +290,7 @@ always @(posedge clk_sys) begin
 					default: ;
 				endcase
 			end else begin
-				case(kcode)
+				case(key_code)
 					8'h45 :
 						if(shift) begin
 							keys[0][0] <= release_btn;        // (CAPS SHIFT)

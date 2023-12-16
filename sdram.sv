@@ -121,7 +121,7 @@ always @(posedge clk) begin
 	reg        refresh = 0;
 	reg        cache_we = 1;
 	reg [15:0] cache_data;
-	reg [24:0] cache_addr;
+	reg [24:0] cache_addr = 25'h1FFFFFF;
 
 	state_t state = STATE_STARTUP;
 

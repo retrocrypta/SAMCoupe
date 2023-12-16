@@ -51,9 +51,6 @@ module video
 
 	// Misc. signals
 	input   [3:0] border_color,
-	input   [1:0] scale,
-	input         scandoubler_disable,
-	input         ypbpr,
 	input         soff,
 	output  [1:0] video_mode,
 	input   [1:0] mode3_hi,
@@ -61,18 +58,16 @@ module video
 	input         full_zx,
 	input         wide,
 
-	// OSD IO interface
-	input         SPI_SCK,
-	input         SPI_SS3,
-	input         SPI_DI,
-
 	// Video outputs
-	output  [5:0] VGA_R,
-	output  [5:0] VGA_G,
-	output  [5:0] VGA_B,
-	output        VGA_VS,
-	output        VGA_HS,
-	output        VGA_DE
+	
+	output reg    HBlank,
+	output reg    VBlank,
+	output reg    HSync,
+	output reg    VSync,
+	output [1:0]  R,
+	output [1:0]  G,
+	output [1:0]  B,
+	output        I
 );
 
 assign io_contention  = |hc[2:0];
@@ -80,11 +75,6 @@ assign mem_contention = |{(fetch | (!mode & !full_zx & hc[6])) & hc[2], hc[1:0]}
 
 assign vram_addr1 = vaddr1;
 assign vram_addr2 = vaddr2;
-
-reg        HBlank;
-reg        HSync;
-reg        VBlank;
-reg        VSync;
 
 reg  [7:0] attr;
 reg [31:0] shift;
@@ -121,7 +111,7 @@ always @(posedge clk_sys) begin
 				vc <= vc + 1'd1;
 			end
 			if( vc == 240) begin
-				mode512 <= m512 | ~hq2x;
+				mode512 <= m512;
 				m512 <= 0;
 			end
 		end else begin
@@ -192,26 +182,7 @@ always_comb begin
 	endcase
 end
 
-wire I;
-wire [1:0] R, G, B;
 assign {G[1],R[1],B[1],I,G[0],R[0],B[0]} = (HBlank | VBlank | soff) ? 7'b0 : clut[index];
-
-wire hq2x = (scale==1);
-video_mixer #(.LINE_LENGTH(768), .HALF_DEPTH(1)) video_mixer
-(
-	.*,
-	.ce_pix(ce_6mp | (mode512 & ce_6mn)),
-	.ce_pix_out(),
-
-	.scanlines({scale==3,scale==2}),
-	.scandoubler(scale || ~scandoubler_disable),
-
-	.mono(0),
-
-	.R({R, R[1], I}),
-	.G({G, G[1], I}),
-	.B({B, B[1], I})
-);
 
 //////////////////////////////////////////////////////////////////////////
 
