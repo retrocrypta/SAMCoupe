@@ -393,7 +393,7 @@ set_global_assignment -name AUTO_MERGE_PLLS OFF
 
 set_global_assignment -name QIP_FILE "mist-modules/mist.qip"
 set_global_assignment -name QIP_FILE sid/sid.qip
-set_global_assignment -name QIP_FILE t80/T80.qip
+set_global_assignment -name QIP_FILE T80/T80.qip
 set_global_assignment -name QIP_FILE cyc10/pll.qip
 set_global_assignment -name SYSTEMVERILOG_FILE sdram.sv
 set_global_assignment -name SYSTEMVERILOG_FILE saa1099.sv

@@ -324,7 +324,7 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name PRE_FLOW_SCRIPT_FILE "quartus_sh:build_id_verilog.tcl"
 set_global_assignment -name QIP_FILE "mist-modules/mist.qip"
 set_global_assignment -name QIP_FILE sid/sid.qip
-set_global_assignment -name QIP_FILE t80/T80.qip
+set_global_assignment -name QIP_FILE T80/T80.qip
 set_global_assignment -name QIP_FILE cyc3/pll.qip
 set_global_assignment -name SYSTEMVERILOG_FILE sdram.sv
 set_global_assignment -name SYSTEMVERILOG_FILE saa1099.sv
