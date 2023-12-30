@@ -683,8 +683,8 @@ sigma_delta_dac #(18) dac_r
 `ifdef I2S_AUDIO
 i2s i2s (
 	.reset(1'b0),
-	.clk(clk_sys),
-	.clk_rate(32'd48_000_000),
+	.clk(clk_mem),
+	.clk_rate(32'd96_000_000),
 
 	.sclk(I2S_BCK),
 	.lrclk(I2S_LRCK),
@@ -698,9 +698,9 @@ i2s i2s (
 `ifdef SPDIF_AUDIO
 spdif spdif
 (
-	.clk_i(clk_sys),
+	.clk_i(clk_mem),
 	.rst_i(1'b0),
-	.clk_rate_i(32'd48_000_000),
+	.clk_rate_i(32'd96_000_000),
 	.spdif_o(SPDIF),
 	.sample_i({~audioR[18], audioR[17:3], ~audioL[18], audioL[17:3]})
 );
