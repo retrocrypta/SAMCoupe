@@ -21,7 +21,7 @@
 
 `default_nettype none
 
-module SamCoupe
+module guest_top
 (
 	input         CLOCK_27,
 `ifdef USE_CLOCK_50
@@ -181,7 +181,7 @@ wire  [1:0] st_scanlines = status[2:1];
 wire clk_sys, clk_mem;
 wire locked;
 
-assign SDRAM_CLK = clk_mem;
+assign SDRAM_CLK = ~clk_mem;
 pll pll
 (
 `ifdef USE_CLOCK_50
